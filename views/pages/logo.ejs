@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../partials/header.ejs %>
+
+  <style>
+  @import url('https://fonts.googleapis.com/css?family=EB+Garamond|Roboto');
+  body {
+      font-family: "Roboto", "Helvetica", sans-serif;
+  }
+  h1 {
+      font-family: "EB Garamond", serif;
+  }
+  input {
+    font-size: 2em;
+    color: #000;
+  }
+  .btn {
+      background-color: #eee;
+      border: 1px solid #666;
+      cursor: pointer;
+  }
+</style>
+</head>
+
+<body onLoad="init();">
+
+<script>
+var width = 500;
+var height = 300;
+var text_scaling = 0.86;
+
+function init() {
+    initCanvas();
+    drawCanvas();
+    document.getElementById("dl").addEventListener('click', dlCanvas, false);
+}
+
+function getCtx() {
+    var c = document.getElementById("canvas");
+    var ctx = c.getContext("2d");
+    return ctx;
+}
+
+function clearCanvas(ctx) {
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, width*2, height*2);
+}
+
+function initCanvas() {
+    ctx = getCtx();
+    clearCanvas(ctx);
+
+    // scale text (once only)
+    ctx.scale(text_scaling, 1);
+}
+
+function drawCanvas() {
+    ctx = getCtx();
+    clearCanvas(ctx);
+
+    // draw logo
+    ctx.fillStyle = "#007cc2";
+    ctx.fillRect(20, 200, 244 / text_scaling, 26);
+
+    // write text
+    var text = document.getElementById("text").value;
+    ctx.fillStyle = "#000000";
+    ctx.textBaseline = "alphabetic";
+    ctx.font = "80px 'EB Garamond'";
+    ctx.fillText(text, 155, 175);
+}
+
+/* Register download handler */
+/* Source: https://stackoverflow.com/questions/12796513/html5-canvas-to-png-file#12796748 */
+function dlCanvas() {
+  var dt = canvas.toDataURL('image/png');
+  dt = dt.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
+  dt = dt.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=Canvas.png');
+  this.href = dt;
+};
+
+</script>
+
+<div class="jumbotron text-center">
+  <div class="container">
+
+    <h1>Helbling Logomat</h1>
+    <p>Design your own logo.</p>
+    <p><form>
+        <input type="text" value="helbling" id="text" autofocus onkeyup="drawCanvas()" onFocus="this.select()" />
+    </form></p>
+
+    <canvas id="canvas" width="500" height="300">
+       <p>We apologize, your browser does not support canvas at this time!</p>
+    </canvas>
+
+    <p><a class="btn" id="dl" download="logo.png" href="#">Download Logo</a></p>
+    <p>Note: Logos generated here do not conform to Helbling Corporate Identity (CI) guidelines.</p>
+
+  </div>
+</div>
+
+</body>
+</html>
