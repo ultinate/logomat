@@ -1,6 +1,6 @@
 {
-  "name": "node-js-getting-started",
-  "version": "0.3.0",
+  "name": "helbling-logomat",
+  "version": "1.0.0",
   "description": "A sample Node.js app using Express 4",
   "engines": {
     "node": "10.x"
@@ -19,10 +19,6 @@
   "devDependencies": {
     "request": "^2.81.0",
     "tape": "^4.7.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/heroku/node-js-getting-started"
   },
   "keywords": [
     "node",
