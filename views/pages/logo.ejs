@@ -27,7 +27,7 @@
 
 <script>
 var width = 500;
-var height = 300;
+var height = 250;
 var text_scaling = 0.86;
 
 function init() {
@@ -61,14 +61,14 @@ function drawCanvas() {
 
     // draw logo
     ctx.fillStyle = "#007cc2";
-    ctx.fillRect(20, 200, 244 / text_scaling, 26);
+    ctx.fillRect(20, 170, 244 / text_scaling, 26);
 
     // write text
     var text = document.getElementById("text").value;
     ctx.fillStyle = "#000000";
     ctx.textBaseline = "alphabetic";
     ctx.font = "80px 'EB Garamond'";
-    ctx.fillText(text, 155, 175);
+    ctx.fillText(text, 155, 145);
 }
 
 /* Register download handler */
@@ -91,7 +91,7 @@ function dlCanvas() {
         <input type="text" value="helbling" id="text" autofocus onkeyup="drawCanvas()" onFocus="this.select()" />
     </form></p>
 
-    <canvas id="canvas" width="500" height="300">
+    <canvas id="canvas" width="500" height="250">
        <p>We apologize, your browser does not support canvas at this time!</p>
     </canvas>
 
