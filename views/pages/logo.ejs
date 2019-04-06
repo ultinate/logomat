@@ -3,105 +3,119 @@
 <head>
   <% include ../partials/header.ejs %>
 
-  <style>
-  @import url('https://fonts.googleapis.com/css?family=EB+Garamond|Roboto');
-  body {
-      font-family: "Roboto", "Helvetica", sans-serif;
-  }
-  h1 {
-      font-family: "EB Garamond", serif;
-  }
-  input {
-    font-size: 2em;
-    color: #000;
-  }
-  .btn {
-      background-color: #eee;
-      border: 1px solid #666;
-      cursor: pointer;
-  }
-</style>
+    <script>
+    var width = 500;
+    var height = 250;
+    var text_scaling = 0.86;
+    var default_text = "helbling";
+
+    function init() {
+        var text = document.getElementById("text").value;
+        if (text == "") {
+            document.getElementById("text").value = default_text;
+        }
+        initCanvas();
+        drawCanvas();
+        document.getElementById("dl").addEventListener('click', dlCanvas, false);
+    }
+
+    function getCtx() {
+        var c = document.getElementById("canvas");
+        var ctx = c.getContext("2d");
+        return ctx;
+    }
+
+    function clearCanvas(ctx) {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, width*2, height*2);
+    }
+
+    function initCanvas() {
+        ctx = getCtx();
+        clearCanvas(ctx);
+
+        // scale text (once only)
+        ctx.scale(text_scaling, 1);
+    }
+
+    function drawLogo(ctx) {
+        var form = document.getElementById("logo_specs");
+        var back = form.elements["background"].value;
+        switch(back) {
+            case 'Bar':
+                ctx.fillStyle = "#007cc2";
+                ctx.fillRect(20, 170, 244 / text_scaling, 26);
+                break;
+            case 'Wave':
+                var img = new Image;
+                img.onload = function(){ 
+                    ctx.drawImage(img, 5, 160); };
+                img.src = "/images/wave.png";
+                break;
+            default:
+                var img = new Image;
+                img.onload = function(){ 
+                    ctx.drawImage(img, 20, 160); };
+                img.src = "/images/cloud_slim.png";
+        }
+    }
+
+    function writeText(ctx) {
+        var text = document.getElementById("text").value;
+        ctx.fillStyle = "#000000";
+        ctx.textBaseline = "alphabetic";
+        ctx.font = "80px 'EB Garamond'";
+        ctx.fillText(text, 155, 145);
+    }
+
+    function drawCanvas() {
+        ctx = getCtx();
+        clearCanvas(ctx);
+        drawLogo(ctx);
+        writeText(ctx);
+    }
+
+    /* Register download handler */
+    /* Source: https://stackoverflow.com/questions/12796513/html5-canvas-to-png-file#12796748 */
+    function dlCanvas() {
+      var dt = canvas.toDataURL('image/png');
+      dt = dt.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
+      dt = dt.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=Canvas.png');
+      this.href = dt;
+    };
+
+    </script>
 </head>
 
 <body onLoad="init();">
-
-<script>
-var width = 500;
-var height = 250;
-var text_scaling = 0.86;
-var default_text = "helbling";
-
-function init() {
-    var text = document.getElementById("text").value;
-    if (text == "") {
-        document.getElementById("text").value = default_text;
-    }
-    initCanvas();
-    drawCanvas();
-    document.getElementById("dl").addEventListener('click', dlCanvas, false);
-}
-
-function getCtx() {
-    var c = document.getElementById("canvas");
-    var ctx = c.getContext("2d");
-    return ctx;
-}
-
-function clearCanvas(ctx) {
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, width*2, height*2);
-}
-
-function initCanvas() {
-    ctx = getCtx();
-    clearCanvas(ctx);
-
-    // scale text (once only)
-    ctx.scale(text_scaling, 1);
-}
-
-function drawCanvas() {
-    ctx = getCtx();
-    clearCanvas(ctx);
-
-    // draw logo
-    ctx.fillStyle = "#007cc2";
-    ctx.fillRect(20, 170, 244 / text_scaling, 26);
-
-    // write text
-    var text = document.getElementById("text").value;
-    ctx.fillStyle = "#000000";
-    ctx.textBaseline = "alphabetic";
-    ctx.font = "80px 'EB Garamond'";
-    ctx.fillText(text, 155, 145);
-}
-
-/* Register download handler */
-/* Source: https://stackoverflow.com/questions/12796513/html5-canvas-to-png-file#12796748 */
-function dlCanvas() {
-  var dt = canvas.toDataURL('image/png');
-  dt = dt.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
-  dt = dt.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=Canvas.png');
-  this.href = dt;
-};
-
-</script>
 
 <div class="jumbotron text-center">
   <div class="container">
 
     <h1>Helbling Logomat</h1>
-    <p>Design your own logo.</p>
-    <p><form>
+    <p>Design your logo.</p>
+    <p><form id="logo_specs">
         <input type="text" value="<%= text %>" id="text" autofocus onkeyup="drawCanvas()" onFocus="this.select()" />
+        <br />
+        <p class="logo_background">
+            <input type="radio" value="Bar" name="background" id="b1" checked="checked" onChange="drawCanvas()" />
+            <label for="b1" class="btn">Bar</label>
+            <input type="radio" value="Wave" name="background" id="b2" onChange="drawCanvas()" />
+            <label for="b2" class="btn">Wave</label>
+            <input type="radio" value="Cloud" name="background" id="b3" onChange="drawCanvas()" />
+            <label for="b3" class="btn">Cloud</label>
+        </p>
+        <!-- <p class="logo_color">
+            <span>Color: </span>
+        </p> -->
     </form></p>
 
     <canvas id="canvas" width="500" height="250">
-       <p>We apologize, your browser does not support canvas at this time!</p>
+       <p>We apologize, your browser does not support canvas!</p>
     </canvas>
 
     <p><a class="btn" id="dl" download="logo.png" href="#">Download Logo</a></p>
-    <p>Note: Logos generated here might not conform to Helbling Corporate Identity (CI) guidelines.</p>
+    <p class="small">Note: Logos generated here might not conform to Helbling Corporate Identity (CI) guidelines.</p>
 
   </div>
 </div>
